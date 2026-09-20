@@ -1,0 +1,66 @@
+.tile {
+  flex: 1 1 0;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  font-size: clamp(1.5rem, 7.5vw, 2.05rem);
+  font-weight: 700;
+  border: 2px solid var(--tile-empty);
+  border-radius: 5px;
+  background-color: transparent;
+  color: var(--fg);
+  user-select: none;
+  min-width: 0;
+  /* مدت صفر است؛ فقط `transition-delay` خانه‌ی در حال چرخش را نیمه‌راه رنگ می‌کند */
+  transition:
+    background-color 0s,
+    border-color 0s,
+    color 0s;
+}
+
+.filled {
+  border-color: var(--tile-filled);
+}
+
+.pop {
+  animation: pop 150ms ease-in-out;
+}
+
+.correct,
+.present,
+.absent {
+  color: #ffffff;
+}
+
+.correct {
+  background-color: var(--correct);
+  border-color: var(--correct);
+}
+
+.present {
+  background-color: var(--present);
+  border-color: var(--present);
+}
+
+.absent {
+  background-color: var(--absent);
+  border-color: var(--absent);
+}
+
+.flip {
+  animation: flip 550ms ease both;
+}
+
+.bounce {
+  animation: bounce 1s ease both;
+}
+
+.small {
+  flex: 0 0 auto;
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  border-width: 2px;
+}

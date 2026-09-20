@@ -1,0 +1,18 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-width: 330px;
+  margin: 0 auto;
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+  width: 100%;
+}
+
+.shake {
+  animation: shake 550ms ease;
+}

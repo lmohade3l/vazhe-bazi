@@ -1,0 +1,56 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--head-border);
+}
+
+.side {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.end {
+  justify-content: flex-end;
+}
+
+.button {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: var(--fg);
+  transition: background-color 0.18s;
+}
+
+.button::after {
+  /* ناحیه‌ی لمسی ۴۴ پیکسلی */
+  content: '';
+  position: absolute;
+  inset: -1px;
+}
+
+.button:hover {
+  background-color: var(--soft);
+}
+
+.question {
+  font-size: 1.24rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.title {
+  font-size: 1.18rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}

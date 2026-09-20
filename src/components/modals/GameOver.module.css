@@ -1,0 +1,62 @@
+.praise {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--correct);
+  margin-bottom: 18px;
+}
+
+.answer {
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+.answerLabel {
+  font-size: 0.9rem;
+  color: var(--muted);
+  margin-bottom: 10px;
+}
+
+.word {
+  display: inline-block;
+  padding: 8px 20px 8px 24px;
+  border-radius: 999px;
+  background-color: var(--soft);
+  font-size: 1.22rem;
+  font-weight: 800;
+  letter-spacing: 4px;
+}
+
+.share {
+  display: block;
+  width: 100%;
+  margin-top: 22px;
+  min-height: 48px;
+  padding: 13px 16px;
+  border-radius: 10px;
+  background-color: var(--correct);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: opacity 0.18s;
+}
+
+.share:hover {
+  opacity: 0.9;
+}
+
+.again {
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  min-height: 44px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.again:hover {
+  color: var(--fg);
+}

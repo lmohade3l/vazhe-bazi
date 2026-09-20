@@ -1,0 +1,53 @@
+.wrapper {
+  margin-top: 18px;
+}
+
+.heading {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.chart {
+  direction: ltr;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.index {
+  flex: 0 0 auto;
+  width: 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.bar {
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 6px;
+  border-radius: 3px;
+  background-color: var(--absent);
+  color: #ffffff;
+  transition: width 260ms ease;
+}
+
+.highlight {
+  background-color: var(--correct);
+}
+
+.count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  line-height: 1;
+}

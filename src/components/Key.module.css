@@ -1,0 +1,55 @@
+.key {
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(46px, 7.6vh, 58px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 1rem;
+  background-color: var(--key-bg);
+  color: var(--key-fg);
+  transition:
+    background-color 0.35s,
+    color 0.35s;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.key:disabled {
+  cursor: default;
+}
+
+.wide {
+  flex: 1.6 1 0;
+  font-size: 0.86rem;
+}
+
+.correct,
+.present,
+.absent {
+  color: #ffffff;
+}
+
+.correct {
+  background-color: var(--correct);
+}
+
+.present {
+  background-color: var(--present);
+}
+
+.absent {
+  background-color: var(--absent);
+}
+
+@media (min-width: 420px) {
+  .key {
+    font-size: 1.1rem;
+  }
+
+  .wide {
+    font-size: 0.95rem;
+  }
+}

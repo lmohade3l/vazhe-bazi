@@ -1,0 +1,17 @@
+.keyboard {
+  direction: ltr;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 0 4px 8px;
+}
+
+.row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
