@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { formatPersianDate } from '../lib/persian';
 import styles from './Home.module.css';
+import { GAME, GAME_COLORS } from '../data/types';
 
 const GAMES = [
   {
@@ -23,7 +24,7 @@ const GAMES = [
   },
 ];
 
-function CardIcon({ colors }) {
+function CardIcon({ colors } : {colors: GAME_COLORS}) {
   const palette = colors ?? Array(4).fill('var(--tile-empty)');
   return (
     <div className={styles.icon} aria-hidden="true">
@@ -34,7 +35,8 @@ function CardIcon({ colors }) {
   );
 }
 
-function CardBody({ game }) {
+function CardBody({ game }: {game: GAME}) {
+  if(!game.colors) return <></>
   return (
     <>
       <CardIcon colors={game.colors} />
@@ -54,7 +56,6 @@ function CardBody({ game }) {
   );
 }
 
-/** صفحه‌ی خانه: فهرست بازی‌ها. */
 export default function Home() {
   return (
     <main className={styles.page}>

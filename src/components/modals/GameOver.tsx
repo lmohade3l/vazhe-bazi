@@ -8,6 +8,14 @@ import styles from './GameOver.module.css';
 const PRAISE = ['نابغه!', 'محشر!', 'عالی!', 'آفرین!', 'خوب بود!', 'اوف، به‌زحمت!'];
 const COPIED_DURATION = 2200;
 
+interface GameOverProps {
+  open: boolean,
+  onClose: () => void,
+  won: boolean,
+  rows: number,
+  
+}
+
 /** مودال پایان بازی. */
 export default function GameOver({
   open,
@@ -21,7 +29,7 @@ export default function GameOver({
   settings,
   onPlayAgain,
   onShareFailed,
-}) {
+}: GameOverProps) {
   const [copied, setCopied] = useState(false);
   const timer = useRef(null);
 

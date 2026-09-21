@@ -1,7 +1,7 @@
 const PREFIX = 'vajebazi:';
 
 /** خواندن یک مقدار از localStorage — در صورت خطا مقدار پیش‌فرض. */
-export function readStore(key, fallback) {
+export function readStore(key: string, fallback) {
   try {
     const raw = window.localStorage.getItem(PREFIX + key);
     if (raw === null) return fallback;
@@ -12,7 +12,7 @@ export function readStore(key, fallback) {
 }
 
 /** نوشتن یک مقدار در localStorage — خطاها نادیده گرفته می‌شوند. */
-export function writeStore(key, value) {
+export function writeStore(key: string, value) {
   try {
     window.localStorage.setItem(PREFIX + key, JSON.stringify(value));
   } catch {
@@ -21,7 +21,7 @@ export function writeStore(key, value) {
 }
 
 /** حذف یک کلید. */
-export function removeStore(key) {
+export function removeStore(key: string) {
   try {
     window.localStorage.removeItem(PREFIX + key);
   } catch {
@@ -34,6 +34,12 @@ export const KEYS = {
   stats: 'stats',
   game: 'game',
 };
+
+export type SETTINGS = {
+  theme: 'light' | 'dark',
+  hardMode: boolean,
+  colorBlind: boolean
+}
 
 export const defaultSettings = {
   theme: 'light',
@@ -49,8 +55,7 @@ export const defaultStats = {
   dist: [0, 0, 0, 0, 0, 0],
 };
 
-/** آمار را با نتیجه‌ی یک بازیِ تمام‌شده به‌روز می‌کند. */
-export function applyResult(stats, { won, attempts, rows }) {
+export function applyResult(stats, { won, attempts, rows }: { won: boolean, attempts: number, rows: number }) {
   const dist = Array.from({ length: rows }, (_, i) => stats.dist[i] ?? 0);
   if (won) dist[attempts - 1] += 1;
   const streak = won ? stats.streak + 1 : 0;

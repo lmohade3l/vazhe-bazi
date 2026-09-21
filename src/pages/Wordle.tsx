@@ -13,15 +13,13 @@ import { WON } from '../hooks/useWordle';
 import { useWordle } from '../hooks/useWordle';
 import styles from './Wordle.module.css';
 
-/** حروفی که کیبورد فیزیکی مجاز است وارد کند. */
 const LETTERS = new Set(
   keyboardRows.flat().filter((key) => key !== ENTER && key !== BACKSPACE),
 );
 
-/** صفحه‌ی بازی حدس‌واژه. */
 export default function Wordle({ settings, setSetting }) {
   const game = useWordle({ hardMode: settings.hardMode });
-  const [openModal, setOpenModal] = useState(null);
+  const [openModal, setOpenModal] = useState<'help' | 'stats' | 'settings' | null>(null);
 
   const closeModal = useCallback(() => setOpenModal(null), []);
   const anyModalOpen = openModal !== null || game.gameOverOpen;
