@@ -4,10 +4,6 @@ const FLIP_STEP = 0.25;
 const FLIP_MIDPOINT = 0.275;
 const BOUNCE_STEP = 0.1;
 
-/**
- * یک خانه‌ی برد. وقتی `animate` روشن باشد، خانه با تأخیر پله‌ای می‌چرخد و
- * رنگِ وضعیت دقیقاً در نیمه‌ی چرخش عوض می‌شود.
- */
 export default function Tile({
   letter = '',
   state = null,

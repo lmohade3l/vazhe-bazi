@@ -12,7 +12,7 @@ export function readStore(key: string, fallback) {
 }
 
 /** نوشتن یک مقدار در localStorage — خطاها نادیده گرفته می‌شوند. */
-export function writeStore(key: string, value) {
+export function writeStore(key: string, value: string) {
   try {
     window.localStorage.setItem(PREFIX + key, JSON.stringify(value));
   } catch {
@@ -47,6 +47,15 @@ export const defaultSettings = {
   colorBlind: false,
 };
 
+export type STATS = {
+  played: number,
+  wins: number,
+  streak: number,
+  maxStreak: number,
+  dist: number[],
+
+}
+
 export const defaultStats = {
   played: 0,
   wins: 0,
@@ -55,7 +64,7 @@ export const defaultStats = {
   dist: [0, 0, 0, 0, 0, 0],
 };
 
-export function applyResult(stats, { won, attempts, rows }: { won: boolean, attempts: number, rows: number }) {
+export function applyResult(stats: STATS, { won, attempts, rows }: { won: boolean, attempts: number, rows: number }) {
   const dist = Array.from({ length: rows }, (_, i) => stats.dist[i] ?? 0);
   if (won) dist[attempts - 1] += 1;
   const streak = won ? stats.streak + 1 : 0;

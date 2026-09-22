@@ -1,11 +1,17 @@
-import { useEffect, useRef } from 'react';
+import { ReactNode, useEffect, useRef } from 'react';
 import styles from './Modal.module.css';
 
 const FOCUSABLE =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-/** پایه‌ی مشترک همه‌ی مودال‌ها: اورلی، بستن با Escape و تله‌ی فوکوس. */
-export default function Modal({ open, onClose, title, labelledBy, children }) {
+interface ModalProps {
+  open: boolean, 
+  onClose: () => void, 
+  title: string, 
+  labelledBy, 
+  children: ReactNode
+}
+export default function Modal({ open, onClose, title, labelledBy, children }: ModalProps) {
   const cardRef = useRef(null);
   const previousFocus = useRef(null);
 

@@ -2,7 +2,10 @@ import { BACKSPACE, ENTER, keyAriaLabels, keyLabels } from '../data/keyboard';
 import styles from './Key.module.css';
 
 /** یک کلید از کیبورد مجازی. */
-export default function Key({ value, state, onKey, disabled }) {
+export default function Key(
+  { value, state, onKey, disabled }
+    : { value: string, state, onKey, disabled }
+) {
   const isWide = value === ENTER || value === BACKSPACE;
   const label = keyLabels[value] ?? value;
   const classes = [styles.key];

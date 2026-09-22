@@ -1,7 +1,7 @@
 import styles from './Toast.module.css';
 
 /** پیام کوتاه بالای برد. */
-export default function Toast({ toast }) {
+export default function Toast({ toast }: { toast: { message: string, id: string } }) {
   return (
     <div className={styles.region} role="status" aria-live="polite">
       {toast ? (

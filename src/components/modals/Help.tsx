@@ -25,7 +25,7 @@ const EXAMPLES = [
 ];
 
 /** مودال راهنما. */
-export default function Help({ open, onClose }) {
+export default function Help({ open, onClose } : {open: boolean , onClose: () => void}) {
   return (
     <Modal open={open} onClose={onClose} title="چطور بازی کنیم" labelledBy="help-title">
       <p className={styles.intro}>

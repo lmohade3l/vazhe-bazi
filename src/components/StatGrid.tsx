@@ -1,8 +1,8 @@
 import { toFa } from '../lib/persian';
+import { STATS } from '../lib/storage';
 import styles from './StatGrid.module.css';
 
-/** چهار عدد کلیدیِ آمار. */
-export default function StatGrid({ stats }) {
+export default function StatGrid({ stats } : {stats: STATS}) {
   const winRate = stats.played === 0 ? 0 : Math.round((stats.wins / stats.played) * 100);
 
   const items = [

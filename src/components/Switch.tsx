@@ -1,7 +1,21 @@
 import styles from './Switch.module.css';
 
-/** سوئیچ روشن/خاموش. */
-export default function Switch({ checked, onChange, label, description, onBlocked }) {
+export default function Switch(
+  {
+    checked,
+    onChange,
+    label,
+    description,
+    onBlocked
+  }:
+    {
+      checked: boolean,
+      onChange: (value: boolean) => void,
+      label: string,
+      description: string,
+      onBlocked?: () => boolean
+    }
+) {
   const handleClick = () => {
     if (onBlocked && onBlocked()) return;
     onChange(!checked);

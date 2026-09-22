@@ -4,6 +4,7 @@ import StatGrid from '../StatGrid';
 import Distribution from '../Distribution';
 import { buildShareText, shareResult } from '../../lib/share';
 import styles from './GameOver.module.css';
+import { SETTINGS, STATS } from '../../lib/storage';
 
 const PRAISE = ['نابغه!', 'محشر!', 'عالی!', 'آفرین!', 'خوب بود!', 'اوف، به‌زحمت!'];
 const COPIED_DURATION = 2200;
@@ -13,10 +14,15 @@ interface GameOverProps {
   onClose: () => void,
   won: boolean,
   rows: number,
-  
+  stats: STATS,
+  guesses: string[],
+  solution?: string,
+  puzzleNumber: number,
+  settings: SETTINGS,
+  onPlayAgain: () => void
+  onShareFailed: () => void
 }
 
-/** مودال پایان بازی. */
 export default function GameOver({
   open,
   onClose,
@@ -31,9 +37,11 @@ export default function GameOver({
   onShareFailed,
 }: GameOverProps) {
   const [copied, setCopied] = useState(false);
-  const timer = useRef(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(null);
 
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  useEffect(() => {
+    () => timer && timer.current && window.clearTimeout(timer.current)
+  }, []);
 
   const handleShare = async () => {
     const text = buildShareText({
@@ -51,7 +59,7 @@ export default function GameOver({
       return;
     }
     setCopied(true);
-    window.clearTimeout(timer.current);
+    timer && timer.current && window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setCopied(false), COPIED_DURATION);
   };
 

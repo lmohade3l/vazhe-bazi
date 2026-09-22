@@ -1,12 +1,8 @@
 import { useCallback, useState } from 'react';
-import { readStore, writeStore } from '../lib/storage';
+import { readStore, SETTINGS, writeStore } from '../lib/storage';
 
-/**
- * یک state که خودش را در localStorage نگه می‌دارد.
- * مقدار اولیه فقط یک‌بار خوانده می‌شود.
- */
-export function useLocalStorage(key, initialValue) {
-  const [value, setValue] = useState(() => readStore(key, initialValue));
+export function useLocalStorage(key: string, initialValue: SETTINGS) {
+  const [value, setValue] = useState<string>(() => readStore(key, initialValue));
 
   const update = useCallback(
     (next) => {

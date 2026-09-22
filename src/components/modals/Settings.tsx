@@ -2,7 +2,6 @@ import Modal from '../Modal';
 import Switch from '../Switch';
 import styles from './Settings.module.css';
 
-/** مودال تنظیمات. */
 export default function Settings({
   open,
   onClose,
