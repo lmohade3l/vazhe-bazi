@@ -3,8 +3,13 @@ import { keyboardRows } from '../data/keyboard';
 import { normalize } from '../lib/persian';
 import styles from './Keyboard.module.css';
 
-/** کیبورد مجازی فارسی. کلیدها از چپ چیده می‌شوند. */
-export default function Keyboard({ letterStates, onKey, disabled }) {
+interface KeyboardProps {
+  letterStates: ,
+  onKey: (value: string) => void,
+  disabled: boolean
+}
+
+export default function Keyboard({ letterStates, onKey, disabled }:KeyboardProps) {
   return (
     <div className={styles.keyboard} role="group" aria-label="کیبورد فارسی">
       {keyboardRows.map((row, index) => (

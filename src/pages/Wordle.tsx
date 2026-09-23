@@ -12,12 +12,18 @@ import { normalize } from '../lib/persian';
 import { WON } from '../hooks/useWordle';
 import { useWordle } from '../hooks/useWordle';
 import styles from './Wordle.module.css';
+import { SETTINGS } from '../lib/storage';
 
 const LETTERS = new Set(
   keyboardRows.flat().filter((key) => key !== ENTER && key !== BACKSPACE),
 );
 
-export default function Wordle({ settings, setSetting }) {
+interface WordleProps {
+  settings: SETTINGS, 
+  setSetting: () => void
+}
+
+export default function Wordle({ settings, setSetting } : WordleProps) {
   const game = useWordle({ hardMode: settings.hardMode });
   const [openModal, setOpenModal] = useState<'help' | 'stats' | 'settings' | null>(null);
 
@@ -29,7 +35,7 @@ export default function Wordle({ settings, setSetting }) {
   useEffect(() => {
     if (physicalInputBlocked) return undefined;
 
-    const onKeyDown = (event) => {
+    const onKeyDown = (event:KeyboardEvent) => {
       if (event.ctrlKey || event.metaKey || event.altKey) return;
 
       if (event.key === 'Enter') {
@@ -61,7 +67,7 @@ export default function Wordle({ settings, setSetting }) {
         onSettings={() => setOpenModal('settings')}
       />
 
-      <Toast toast={game.toast} />
+      {game.toast && <Toast toast={game.toast} />}
 
       <main className={styles.main}>
         <Board

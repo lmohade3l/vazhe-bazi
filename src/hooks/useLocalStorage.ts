@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
-import { readStore, SETTINGS, writeStore } from '../lib/storage';
+import { readStore, SETTING_KEY, SETTINGS, writeStore } from '../lib/storage';
 
-export function useLocalStorage(key: string, initialValue: SETTINGS) {
+export function useLocalStorage(key: SETTING_KEY, initialValue: SETTINGS) {
   const [value, setValue] = useState<string>(() => readStore(key, initialValue));
 
   const update = useCallback(

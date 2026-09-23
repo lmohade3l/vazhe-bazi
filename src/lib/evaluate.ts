@@ -4,14 +4,8 @@ export const CORRECT = 'correct';
 export const PRESENT = 'present';
 export const ABSENT = 'absent';
 
-/** ترتیب اهمیت وضعیت‌ها — برای رنگ کلیدهای کیبورد. */
 const RANK = { [ABSENT]: 1, [PRESENT]: 2, [CORRECT]: 3 };
 
-/**
- * ارزیابی دومرحله‌ای: ابتدا حروفِ درست‌جا علامت می‌خورند و از شمارش کلمه‌ی
- * هدف کم می‌شوند، سپس در پاس دوم حروفِ موجود اما جابه‌جا مشخص می‌شوند.
- * به این ترتیب حروف تکراری درست شمرده می‌شوند.
- */
 export function evaluateGuess(guess, solution) {
   const guessLetters = toLetters(normalize(guess));
   const solutionLetters = toLetters(normalize(solution));
@@ -52,7 +46,7 @@ export function buildLetterStates(guesses, solution) {
       if (!current || RANK[next] > RANK[current]) states[letter] = next;
     });
   });
-  return states;
+  return states; 
 }
 
 /**

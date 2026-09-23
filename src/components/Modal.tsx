@@ -8,7 +8,7 @@ interface ModalProps {
   open: boolean, 
   onClose: () => void, 
   title: string, 
-  labelledBy, 
+  labelledBy: string, 
   children: ReactNode
 }
 export default function Modal({ open, onClose, title, labelledBy, children }: ModalProps) {
@@ -22,7 +22,7 @@ export default function Modal({ open, onClose, title, labelledBy, children }: Mo
     const card = cardRef.current;
     card?.querySelector(FOCUSABLE)?.focus();
 
-    const onKeyDown = (event) => {
+    const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
         event.preventDefault();
         onClose();

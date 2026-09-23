@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 
-/** تم و حالت رنگ‌کوری را روی `<html>` اعمال می‌کند. */
-export function useTheme(theme, colorBlind) {
+export type THEME = 'light' | 'dark'
+
+export function useTheme(theme: THEME, colorBlind:boolean) {
   useEffect(() => {
     const root = document.documentElement;
     root.dataset.theme = theme;

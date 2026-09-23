@@ -1,6 +1,16 @@
+import { SETTINGS } from '../../lib/storage';
 import Modal from '../Modal';
 import Switch from '../Switch';
 import styles from './Settings.module.css';
+
+interface SettingsProps { 
+  open: boolean,
+  onClose: () => void,
+  settings: SETTINGS,
+  setSetting: (label: string, value: SETTINGS) => void,
+  canChangeHardMode: boolean,
+  onHardModeBlocked: () => void
+}
 
 export default function Settings({
   open,
@@ -9,7 +19,7 @@ export default function Settings({
   setSetting,
   canChangeHardMode,
   onHardModeBlocked,
-}) {
+}:SettingsProps) {
   return (
     <Modal open={open} onClose={onClose} title="تنظیمات" labelledBy="settings-title">
       <div className={styles.list}>
