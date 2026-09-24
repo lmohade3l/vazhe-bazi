@@ -1,9 +1,17 @@
 import { Link } from 'react-router-dom';
 import { formatPersianDate } from '../lib/persian';
 import styles from './Home.module.css';
-import { GAME, GAME_COLORS } from '../data/types';
 
-const GAMES = [
+interface GameCard {
+  title: string;
+  description: string;
+  /** اگر نباشد، کارت «به‌زودی» و غیرفعال است. */
+  to?: string;
+  /** چهار رنگِ آیکون؛ نبودنش یعنی رنگ پیش‌فرضِ خاکستری. */
+  colors?: string[];
+}
+
+const GAMES: GameCard[] = [
   {
     title: 'حدس‌واژه',
     description: 'کلمه‌ی پنج‌حرفیِ امروز را در ۶ تلاش پیدا کن',
@@ -24,8 +32,8 @@ const GAMES = [
   },
 ];
 
-function CardIcon({ colors } : {colors: GAME_COLORS}) {
-  const palette = colors ?? Array(4).fill('var(--tile-empty)');
+function CardIcon({ colors }: { colors?: string[] }) {
+  const palette = colors ?? Array<string>(4).fill('var(--tile-empty)');
   return (
     <div className={styles.icon} aria-hidden="true">
       {palette.map((color, index) => (
@@ -35,8 +43,7 @@ function CardIcon({ colors } : {colors: GAME_COLORS}) {
   );
 }
 
-function CardBody({ game }: {game: GAME}) {
-  if(!game.colors) return <></>
+function CardBody({ game }: { game: GameCard }) {
   return (
     <>
       <CardIcon colors={game.colors} />
@@ -56,6 +63,7 @@ function CardBody({ game }: {game: GAME}) {
   );
 }
 
+/** صفحه‌ی خانه: فهرست بازی‌ها. */
 export default function Home() {
   return (
     <main className={styles.page}>
@@ -70,7 +78,11 @@ export default function Home() {
               <CardBody game={game} />
             </Link>
           ) : (
-            <div key={game.title} className={`${styles.card} ${styles.disabled}`} aria-disabled="true">
+            <div
+              key={game.title}
+              className={`${styles.card} ${styles.disabled}`}
+              aria-disabled="true"
+            >
               <CardBody game={game} />
             </div>
           ),

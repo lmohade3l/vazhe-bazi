@@ -25,6 +25,7 @@
 
 | موضوع | تصمیم |
 |---|---|
+| نسخه‌ی TypeScript | **۵.۹** — نه ۷. دلیلش در یادداشت تسک ۱ پایین آمده. |
 | مبنای روز | **نیمه‌شب `Asia/Tehran`** — کلمه‌ی همه در یک لحظه یکی است، مستقل از ساعت دستگاه |
 | شروع تقویم بازی | **۱ جولای ۲۰۲۶** = پازل شماره‌ی ۱ (پس امروز ۲۰ سپتامبر ۲۰۲۶ = پازل **۸۲**) |
 | پازل‌های گذشته | **قابل بازی‌کردن** هستند، نه فقط قابل دیدن |
@@ -55,7 +56,7 @@ Pacific/Kiritimati   → پازل ۹۹۵ (رهبری)
 
 | # | تسک | وضعیت |
 |---|---|---|
-| ۱ | مهاجرت به TypeScript | ⬜ |
+| ۱ | مهاجرت به TypeScript | ✅ |
 | ۲ | مبنای زمانی و کلمه‌ی روز | ⬜ |
 | ۳ | بزرگ‌کردن فهرست کلمه‌ها | ⬜ |
 | ۴ | بازطراحی لایه‌ی ذخیره‌سازی | ⬜ |
@@ -68,76 +69,44 @@ Pacific/Kiritimati   → پازل ۹۹۵ (رهبری)
 
 ---
 
-### تسک ۱ — مهاجرت به TypeScript
+### تسک ۱ — مهاجرت به TypeScript ✅
 
-**چرا اول؟** هر تسک بعدی کد جدید می‌نویسد. الان ۴۵ فایل کوچک داریم؛ اگر این کار
-را آخر بگذاریم، باید ۷۰ فایلِ بزرگ‌تر را تبدیل کنیم. ضمناً تایپ‌های دامنه
-(`PuzzleNumber`، `DayStatus`، `GameRecord`، `Wallet`) پایه‌ی تسک‌های ۴ تا ۸ هستند.
-
-**هدف:** کل پروژه TypeScript شود، با `strict` روشن و بدون `any`.
+**انجام شد در ۲۴ سپتامبر ۲۰۲۶.**
 
 **معیار پذیرش:**
 
-- [ ] `typescript`، `@types/react@^18`، `@types/react-dom@^18` به‌عنوان devDependency نصب شده‌اند
-- [ ] `tsconfig.json` و `tsconfig.node.json` استاندارد Vite ساخته شده‌اند
-- [ ] `strict: true` و `noUncheckedIndexedAccess: true` روشن است
-- [ ] همه‌ی `.jsx` به `.tsx` و همه‌ی `.js` داخل `src/` به `.ts` تبدیل شده‌اند
-- [ ] اسکریپت `npm run typecheck` (`tsc --noEmit`) اضافه شده و **بدون خطا** پاس می‌شود
-- [ ] هیچ `any`، `@ts-ignore` یا `@ts-expect-error`ای بدون کامنتِ توجیهی نمانده
-- [ ] props همه‌ی کامپوننت‌ها با `interface` تایپ شده‌اند (نه `React.FC`)
-- [ ] یک فایل `src/types.ts` با تایپ‌های دامنه ساخته شده (پایین را ببین)
-- [ ] ESLint با `typescript-eslint` کار می‌کند و `npm run lint` پاس می‌شود
-- [ ] `npm run build` بدون warning پاس می‌شود
-- [ ] هیچ تغییر رفتاری در بازی ایجاد نشده
+- [x] `typescript`، `@types/react@^18`، `@types/react-dom@^18` به‌عنوان devDependency نصب شده‌اند
+- [x] `tsconfig.json` ساخته شد (یک فایل، بدون `references` — دلیلش پایین)
+- [x] `strict: true` و `noUncheckedIndexedAccess: true` روشن است
+- [x] همه‌ی `.jsx` به `.tsx` و همه‌ی `.js` داخل `src/` به `.ts` تبدیل شده‌اند
+- [x] `npm run typecheck` بدون خطا پاس می‌شود
+- [x] هیچ `any`، `@ts-ignore` یا `@ts-expect-error`ای در `src/` نیست
+- [x] props همه‌ی کامپوننت‌ها با `interface` تایپ شده‌اند (نه `React.FC`)
+- [x] `src/types.ts` با تایپ‌های دامنه ساخته شد
+- [x] ESLint با `typescript-eslint` کار می‌کند — ۳۲ فایل واقعاً لینت می‌شوند
+- [x] `npm run build` بدون warning پاس می‌شود
+- [x] هیچ تغییر رفتاری در بازی ایجاد نشد (۴۸ تست رفتاری + ۲۳ تست منطقی پاس شد)
 
-**تایپ‌های دامنه‌ای که باید در `src/types.ts` باشند** (تسک‌های بعدی رویشان بنا می‌شوند):
+**تصمیم‌ها و انحراف‌ها:**
 
-```ts
-export type LetterState = 'correct' | 'present' | 'absent';
-export type GameStatus = 'playing' | 'won' | 'lost';
-export type Theme = 'light' | 'dark';
+۱. **TypeScript روی ۵.۹ پین شد، نه ۷.** `typescript-eslint` صراحتاً TS 7 را رد
+   می‌کند (`typescript-eslint does not support TS 7.0`) و بدون آن ESLint اصلاً
+   نمی‌تواند فایل `.tsx` را پارس کند. پیگیری پشتیبانی:
+   [typescript-eslint#10940](https://github.com/typescript-eslint/typescript-eslint/issues/10940).
+   هر وقت پشتیبانی آمد، ارتقا فقط عوض‌کردن نسخه است.
 
-/** وضعیت یک روز در تاریخچه و تقویم */
-export type DayStatus = 'won' | 'lost' | 'in-progress' | 'not-played';
+۲. **`tsconfig.node.json` حذف شد.** الگوی `references` نیاز به `composite: true`
+   دارد و با `noEmit` جمع نمی‌شود. یک `tsconfig.json` که هم `src` و هم
+   `vite.config.ts` را پوشش می‌دهد ساده‌تر و بدون هزینه است.
 
-export interface Settings {
-  theme: Theme;
-  hardMode: boolean;
-  colorBlind: boolean;
-}
+۳. **`global.d.ts` با `src/vite-env.d.ts` جایگزین شد** که `vite/client` را
+   ارجاع می‌دهد؛ این هم CSS module، هم CSS ساده و هم تصویرها را پوشش می‌دهد.
 
-export interface Stats {
-  played: number;
-  wins: number;
-  streak: number;
-  maxStreak: number;
-  dist: number[];
-}
+۴. **`src/data/types.ts` حذف و محتوایش منتقل شد.** تایپ کارت‌های صفحه‌ی خانه
+   مخصوص همان صفحه است و داخل `Home.tsx` ماند؛ تایپ‌های مشترک در `src/types.ts`.
 
-export interface Puzzle {
-  /** شماره‌ی پازل، از ۱ شروع می‌شود */
-  number: number;
-  solution: string;
-  /** تاریخ میلادیِ روزِ پازل به شکل YYYY-MM-DD */
-  date: string;
-}
-
-export interface GameRecord {
-  puzzle: number;
-  guesses: string[];
-  status: GameStatus;
-  /** آمار این بازی قبلاً ثبت شده یا نه */
-  scored: boolean;
-}
-```
-
-**نکته‌ها:**
-- `vite-env.d.ts` را فراموش نکن، وگرنه `import styles from './X.module.css'` تایپ ندارد.
-- `noUncheckedIndexedAccess` باعث می‌شود `array[i]` از نوع `T | undefined` باشد. این
-  در `evaluate.ts` و `Board.tsx` چند جا را می‌ترکاند — درست کردنشان عمداً خواسته شده،
-  چون همان‌جاها واقعاً می‌توانند `undefined` بدهند.
-
----
+۵. **`Settings` و `Stats` هم نام تایپ‌اند هم نام کامپوننت مودال.** در سه فایلی
+   که هر دو لازم‌اند، تایپ با نام دیگری وارد می‌شود (`Settings as UserSettings`).
 
 ### تسک ۲ — مبنای زمانی و کلمه‌ی روز
 
@@ -327,3 +296,4 @@ export interface GameRecord {
 | تسک | تاریخ | نتیجه | یادداشت |
 |---|---|---|---|
 | ۱ | ۲۳ سپتامبر ۲۰۲۶ | ⏳ ناتمام | خطای نحوی در `Keyboard.tsx:7` جلوی بیلد را گرفته و ۱۱۹ خطای تایپ را پنهان کرده. ESLint هنوز هیچ فایل TSای را نمی‌بیند. وابستگی‌های TS در `dependencies` به‌جای `devDependencies`. اسکریپت `typecheck` اضافه نشده. |
+| ۱ | ۲۴ سپتامبر ۲۰۲۶ | ✅ تمام | تایپ‌ها توسط کلود کامل شد. `typecheck`، `lint` و `build` پاس می‌شوند؛ ۳۲ فایل واقعاً لینت می‌شوند؛ ۴۸ تست رفتاری بدون تغییر پاس شد. TypeScript روی ۵.۹ پین شد چون `typescript-eslint` هنوز TS 7 را پشتیبانی نمی‌کند. |

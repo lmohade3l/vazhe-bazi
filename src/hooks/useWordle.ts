@@ -1,16 +1,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { getDailyPuzzle, isValidWord } from '../data/words';
 import { ENTER, BACKSPACE } from '../data/keyboard';
-import { buildLetterStates, checkHardMode, evaluateGuess } from '../lib/evaluate';
-import { normalize, toFa, toLetters } from '../lib/persian';
 import {
-  KEYS,
-  applyResult,
-  defaultStats,
-  readStore,
-  writeStore,
-} from '../lib/storage';
+  buildLetterStates,
+  checkHardMode,
+  evaluateGuess,
+  type LetterStates,
+} from '../lib/evaluate';
+import { normalize, toFa, toLetters } from '../lib/persian';
+import { KEYS, applyResult, defaultStats, readStore, writeStore } from '../lib/storage';
 import { useLocalStorage } from './useLocalStorage';
+import type {
+  GameRecord,
+  GameStatus,
+  LetterState,
+  Puzzle,
+  Stats,
+  ToastMessage,
+} from '../types';
 
 export const PLAYING = 'playing';
 export const WON = 'won';
@@ -23,13 +30,17 @@ const LOSS_MODAL_DELAY = 400;
 const TOAST_DURATION = 1600;
 const SHAKE_DURATION = 550;
 
+/** بخشی از `GameRecord` که برای شروعِ state لازم است. */
+type RestoredGame = Pick<GameRecord, 'guesses' | 'status' | 'scored'>;
+
 /** بازیِ ذخیره‌شده را می‌خواند؛ اگر مربوط به پازل دیگری باشد نادیده می‌گیرد. */
-function loadGame(puzzleNumber) {
-  const saved = readStore(KEYS.game, null);
+function loadGame(puzzleNumber: number): RestoredGame {
+  const saved = readStore<Partial<GameRecord> | null>(KEYS.game, null);
   if (!saved || saved.puzzle !== puzzleNumber || !Array.isArray(saved.guesses)) {
     return { guesses: [], status: PLAYING, scored: false };
   }
-  const status = saved.status === WON || saved.status === LOST ? saved.status : PLAYING;
+  const status: GameStatus =
+    saved.status === WON || saved.status === LOST ? saved.status : PLAYING;
   return {
     guesses: saved.guesses,
     status,
@@ -37,35 +48,68 @@ function loadGame(puzzleNumber) {
   };
 }
 
+interface UseWordleOptions {
+  hardMode: boolean;
+}
+
+export interface WordleGame {
+  puzzle: Puzzle;
+  solution: string;
+  wordLength: number;
+  rows: number;
+  guesses: string[];
+  evaluations: LetterState[][];
+  current: string;
+  status: GameStatus;
+  letterStates: LetterStates;
+  /** اندیس ردیفی که در حال چرخیدن است؛ ‎-1 یعنی هیچ ردیفی. */
+  animatingRow: number;
+  shaking: boolean;
+  bouncing: boolean;
+  toast: ToastMessage | null;
+  stats: Stats;
+  /** شماره‌ی تلاشی که بازی با آن برده شد — برای پررنگ‌کردن میله‌ی توزیع. */
+  lastWinRow: number | null;
+  gameOverOpen: boolean;
+  /** ورودی گرفته نمی‌شود: یا بازی تمام شده یا در حال نمایش نتیجه‌ی حدس است. */
+  locked: boolean;
+  canChangeHardMode: boolean;
+  handleKey: (key: string) => void;
+  showToast: (message: string) => void;
+  closeGameOver: () => void;
+  openGameOver: () => void;
+  playAgain: () => void;
+}
+
 /** تمام state بازی حدس‌واژه. */
-export function useWordle({ hardMode }) {
+export function useWordle({ hardMode }: UseWordleOptions): WordleGame {
   const puzzle = useMemo(() => getDailyPuzzle(), []);
   const solution = puzzle.solution;
   const wordLength = toLetters(solution).length;
   const rows = wordLength + 1;
 
-  const restored = useRef(null);
-  if (restored.current === null) restored.current = loadGame(puzzle.number);
+  // فقط یک‌بار در عمر کامپوننت خوانده می‌شود.
+  const [restored] = useState<RestoredGame>(() => loadGame(puzzle.number));
 
-  const [guesses, setGuesses] = useState(restored.current.guesses);
-  const [status, setStatus] = useState(restored.current.status);
+  const [guesses, setGuesses] = useState<string[]>(restored.guesses);
+  const [status, setStatus] = useState<GameStatus>(restored.status);
   const [current, setCurrent] = useState('');
-  const [revealedCount, setRevealedCount] = useState(restored.current.guesses.length);
+  const [revealedCount, setRevealedCount] = useState(restored.guesses.length);
   const [shaking, setShaking] = useState(false);
   const [bouncing, setBouncing] = useState(false);
-  const [toast, setToast] = useState(null);
+  const [toast, setToast] = useState<ToastMessage | null>(null);
   const [gameOverOpen, setGameOverOpen] = useState(false);
 
-  const [stats, setStats] = useLocalStorage(KEYS.stats, defaultStats);
-  const [lastWinRow, setLastWinRow] = useState(
-    restored.current.status === WON ? restored.current.guesses.length : null,
+  const [stats, setStats] = useLocalStorage<Stats>(KEYS.stats, defaultStats);
+  const [lastWinRow, setLastWinRow] = useState<number | null>(
+    restored.status === WON ? restored.guesses.length : null,
   );
 
   /** آمار هر پازل فقط یک‌بار ثبت می‌شود، حتی اگر دوباره بازی شود. */
-  const scored = useRef(restored.current.scored);
+  const scored = useRef(restored.scored);
 
-  const timers = useRef([]);
-  const later = useCallback((fn, delay) => {
+  const timers = useRef<number[]>([]);
+  const later = useCallback((fn: () => void, delay: number): number => {
     const id = window.setTimeout(fn, delay);
     timers.current.push(id);
     return id;
@@ -73,14 +117,14 @@ export function useWordle({ hardMode }) {
 
   useEffect(
     () => () => {
-      timers.current.forEach(window.clearTimeout);
+      timers.current.forEach((id) => window.clearTimeout(id));
       timers.current = [];
     },
     [],
   );
 
   const showToast = useCallback(
-    (message) => {
+    (message: string) => {
       setToast({ message, id: Date.now() });
       later(() => setToast(null), TOAST_DURATION);
     },
@@ -88,7 +132,7 @@ export function useWordle({ hardMode }) {
   );
 
   const rejectGuess = useCallback(
-    (message) => {
+    (message: string) => {
       showToast(message);
       setShaking(true);
       later(() => setShaking(false), SHAKE_DURATION);
@@ -100,7 +144,7 @@ export function useWordle({ hardMode }) {
   const locked = status !== PLAYING || revealing;
 
   const addLetter = useCallback(
-    (letter) => {
+    (letter: string) => {
       setCurrent((value) =>
         toLetters(value).length >= wordLength ? value : value + letter,
       );
@@ -113,24 +157,25 @@ export function useWordle({ hardMode }) {
   }, []);
 
   const finishGame = useCallback(
-    (nextGuesses, won) => {
+    (nextGuesses: string[], won: boolean) => {
       setStatus(won ? WON : LOST);
       writeStore(KEYS.game, {
         puzzle: puzzle.number,
         guesses: nextGuesses,
         status: won ? WON : LOST,
         scored: true,
-      });
+      } satisfies GameRecord);
+
       if (!scored.current) {
         scored.current = true;
-        setStats((current) =>
-          applyResult({ ...defaultStats, ...current }, {
-            won,
-            attempts: nextGuesses.length,
-            rows,
-          }),
+        setStats((currentStats) =>
+          applyResult(
+            { ...defaultStats, ...currentStats },
+            { won, attempts: nextGuesses.length, rows },
+          ),
         );
       }
+
       if (won) {
         setLastWinRow(nextGuesses.length);
         setBouncing(true);
@@ -170,7 +215,7 @@ export function useWordle({ hardMode }) {
       guesses: nextGuesses,
       status: PLAYING,
       scored: scored.current,
-    });
+    } satisfies GameRecord);
 
     later(() => {
       setRevealedCount(nextGuesses.length);
@@ -192,7 +237,7 @@ export function useWordle({ hardMode }) {
   ]);
 
   const handleKey = useCallback(
-    (key) => {
+    (key: string) => {
       if (locked) return;
       if (key === ENTER) submitGuess();
       else if (key === BACKSPACE) removeLetter();
@@ -210,6 +255,24 @@ export function useWordle({ hardMode }) {
     () => buildLetterStates(guesses.slice(0, revealedCount), solution),
     [guesses, revealedCount, solution],
   );
+
+  const playAgain = useCallback(() => {
+    setGameOverOpen(false);
+    setGuesses([]);
+    setRevealedCount(0);
+    setCurrent('');
+    setStatus(PLAYING);
+    setBouncing(false);
+    writeStore(KEYS.game, {
+      puzzle: puzzle.number,
+      guesses: [],
+      status: PLAYING,
+      scored: scored.current,
+    } satisfies GameRecord);
+  }, [puzzle.number]);
+
+  const closeGameOver = useCallback(() => setGameOverOpen(false), []);
+  const openGameOver = useCallback(() => setGameOverOpen(true), []);
 
   const animatingRow = revealing ? guesses.length - 1 : -1;
 
@@ -234,21 +297,8 @@ export function useWordle({ hardMode }) {
     canChangeHardMode: guesses.length === 0 || status !== PLAYING,
     handleKey,
     showToast,
-    closeGameOver: () => setGameOverOpen(false),
-    openGameOver: () => setGameOverOpen(true),
-    playAgain: () => {
-      setGameOverOpen(false);
-      setGuesses([]);
-      setRevealedCount(0);
-      setCurrent('');
-      setStatus(PLAYING);
-      setBouncing(false);
-      writeStore(KEYS.game, {
-        puzzle: puzzle.number,
-        guesses: [],
-        status: PLAYING,
-        scored: scored.current,
-      });
-    },
+    closeGameOver,
+    openGameOver,
+    playAgain,
   };
 }

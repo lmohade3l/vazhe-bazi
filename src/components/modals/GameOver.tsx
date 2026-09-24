@@ -3,26 +3,27 @@ import Modal from '../Modal';
 import StatGrid from '../StatGrid';
 import Distribution from '../Distribution';
 import { buildShareText, shareResult } from '../../lib/share';
+import type { Settings, Stats } from '../../types';
 import styles from './GameOver.module.css';
-import { SETTINGS, STATS } from '../../lib/storage';
 
 const PRAISE = ['نابغه!', 'محشر!', 'عالی!', 'آفرین!', 'خوب بود!', 'اوف، به‌زحمت!'];
 const COPIED_DURATION = 2200;
 
 interface GameOverProps {
-  open: boolean,
-  onClose: () => void,
-  won: boolean,
-  rows: number,
-  stats: STATS,
-  guesses: string[],
-  solution?: string,
-  puzzleNumber: number,
-  settings: SETTINGS,
-  onPlayAgain: () => void
-  onShareFailed: () => void
+  open: boolean;
+  onClose: () => void;
+  won: boolean;
+  stats: Stats;
+  rows: number;
+  guesses: string[];
+  solution: string;
+  puzzleNumber: number;
+  settings: Settings;
+  onPlayAgain: () => void;
+  onShareFailed: () => void;
 }
 
+/** مودال پایان بازی. */
 export default function GameOver({
   open,
   onClose,
@@ -37,11 +38,14 @@ export default function GameOver({
   onShareFailed,
 }: GameOverProps) {
   const [copied, setCopied] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout>>(null);
+  const timer = useRef<number | null>(null);
 
-  useEffect(() => {
-    () => timer && timer.current && window.clearTimeout(timer.current)
-  }, []);
+  useEffect(
+    () => () => {
+      if (timer.current !== null) window.clearTimeout(timer.current);
+    },
+    [],
+  );
 
   const handleShare = async () => {
     const text = buildShareText({
@@ -59,7 +63,7 @@ export default function GameOver({
       return;
     }
     setCopied(true);
-    timer && timer.current && window.clearTimeout(timer.current);
+    if (timer.current !== null) window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setCopied(false), COPIED_DURATION);
   };
 
@@ -84,7 +88,7 @@ export default function GameOver({
       <StatGrid stats={stats} />
       <Distribution dist={stats.dist} rows={rows} highlight={won ? guesses.length : null} />
 
-      <button type="button" className={styles.share} onClick={handleShare}>
+      <button type="button" className={styles.share} onClick={() => void handleShare()}>
         {copied ? 'کپی شد ✓' : 'اشتراک‌گذاری نتیجه'}
       </button>
 

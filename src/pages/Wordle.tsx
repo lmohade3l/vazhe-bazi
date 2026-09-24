@@ -9,33 +9,35 @@ import Settings from '../components/modals/Settings';
 import GameOver from '../components/modals/GameOver';
 import { BACKSPACE, ENTER, keyboardRows } from '../data/keyboard';
 import { normalize } from '../lib/persian';
-import { WON } from '../hooks/useWordle';
-import { useWordle } from '../hooks/useWordle';
+import { PLAYING, WON, useWordle } from '../hooks/useWordle';
+// `Settings` نام کامپوننت مودال هم هست، پس تایپ با نام دیگری وارد می‌شود.
+import type { SetSetting, Settings as UserSettings } from '../types';
 import styles from './Wordle.module.css';
-import { SETTINGS } from '../lib/storage';
 
+/** حروفی که کیبورد فیزیکی مجاز است وارد کند. */
 const LETTERS = new Set(
   keyboardRows.flat().filter((key) => key !== ENTER && key !== BACKSPACE),
 );
 
 interface WordleProps {
-  settings: SETTINGS, 
-  setSetting: () => void
+  settings: UserSettings;
+  setSetting: SetSetting;
 }
 
-export default function Wordle({ settings, setSetting } : WordleProps) {
+/** صفحه‌ی بازی حدس‌واژه. */
+export default function Wordle({ settings, setSetting }: WordleProps) {
   const game = useWordle({ hardMode: settings.hardMode });
   const [openModal, setOpenModal] = useState<'help' | 'stats' | 'settings' | null>(null);
 
   const closeModal = useCallback(() => setOpenModal(null), []);
   const anyModalOpen = openModal !== null || game.gameOverOpen;
 
-  const physicalInputBlocked = anyModalOpen || game.status !== 'playing';
+  const physicalInputBlocked = anyModalOpen || game.status !== PLAYING;
 
   useEffect(() => {
     if (physicalInputBlocked) return undefined;
 
-    const onKeyDown = (event:KeyboardEvent) => {
+    const onKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey || event.metaKey || event.altKey) return;
 
       if (event.key === 'Enter') {
@@ -67,7 +69,7 @@ export default function Wordle({ settings, setSetting } : WordleProps) {
         onSettings={() => setOpenModal('settings')}
       />
 
-      {game.toast && <Toast toast={game.toast} />}
+      <Toast toast={game.toast} />
 
       <main className={styles.main}>
         <Board

@@ -1,13 +1,23 @@
 import { useCallback, useState } from 'react';
-import { readStore, SETTING_KEY, SETTINGS, writeStore } from '../lib/storage';
+import { readStore, writeStore, type StorageKey } from '../lib/storage';
 
-export function useLocalStorage(key: SETTING_KEY, initialValue: SETTINGS) {
-  const [value, setValue] = useState<string>(() => readStore(key, initialValue));
+export type SetStoredValue<T> = (next: T | ((current: T) => T)) => void;
 
-  const update = useCallback(
+/**
+ * یک state که خودش را در localStorage نگه می‌دارد.
+ * مقدار اولیه فقط یک‌بار خوانده می‌شود.
+ */
+export function useLocalStorage<T>(
+  key: StorageKey,
+  initialValue: T,
+): [T, SetStoredValue<T>] {
+  const [value, setValue] = useState<T>(() => readStore(key, initialValue));
+
+  const update = useCallback<SetStoredValue<T>>(
     (next) => {
       setValue((current) => {
-        const resolved = typeof next === 'function' ? next(current) : next;
+        const resolved =
+          typeof next === 'function' ? (next as (current: T) => T)(current) : next;
         writeStore(key, resolved);
         return resolved;
       });

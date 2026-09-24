@@ -1,21 +1,22 @@
 import styles from './Switch.module.css';
 
-export default function Switch(
-  {
-    checked,
-    onChange,
-    label,
-    description,
-    onBlocked
-  }:
-    {
-      checked: boolean,
-      onChange: (value: boolean) => void,
-      label: string,
-      description: string,
-      onBlocked?: () => boolean
-    }
-) {
+interface SwitchProps {
+  checked: boolean;
+  onChange: (value: boolean) => void;
+  label: string;
+  description?: string;
+  /** اگر `true` برگرداند، تغییر انجام نمی‌شود. */
+  onBlocked?: () => boolean;
+}
+
+/** سوئیچ روشن/خاموش. */
+export default function Switch({
+  checked,
+  onChange,
+  label,
+  description,
+  onBlocked,
+}: SwitchProps) {
   const handleClick = () => {
     if (onBlocked && onBlocked()) return;
     onChange(!checked);

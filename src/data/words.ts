@@ -6,12 +6,14 @@
  * (و در صورت تمایل به `answers`) — طول هر کلمه باید دقیقاً پنج حرف باشد.
  */
 
+import type { Puzzle } from '../types';
+
 export const WORD_LENGTH = 5;
 
 /** تاریخ مبنا برای محاسبه‌ی کلمه‌ی روز — نباید تغییر کند. */
 export const EPOCH = new Date(2024, 0, 1);
 
-export const words = [
+export const words: string[] = [
   "ستاره", "پرنده", "باران", "آسمان", "پنجره", "کلمات",
   "دریچه", "پاییز", "شکلات", "انگور", "خربزه", "بادام",
   "نارنج", "انجیر", "مدرسه", "نیمکت", "دیوار", "بالکن",
@@ -52,7 +54,7 @@ export const words = [
 ];
 
 /** کلمه‌های قابل انتخاب به‌عنوان کلمه‌ی روز. */
-export const answers = [
+export const answers: string[] = [
   "ستاره", "باران", "پنجره", "دریچه", "شکلات", "خربزه",
   "نارنج", "مدرسه", "دیوار", "فرشته", "شامپو", "جزیره",
   "بنفشه", "یاسمن", "سنجاب", "کفتار", "گنجشک", "قناری",
@@ -75,7 +77,7 @@ export const answers = [
 ];
 
 /** تعداد روزهای سپری‌شده از تاریخ مبنا (بر اساس نیمه‌شب محلی). */
-function daysSinceEpoch(today = new Date()) {
+function daysSinceEpoch(today: Date = new Date()): number {
   const start = Date.UTC(EPOCH.getFullYear(), EPOCH.getMonth(), EPOCH.getDate());
   const now = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
   return Math.floor((now - start) / 86400000);
@@ -83,15 +85,23 @@ function daysSinceEpoch(today = new Date()) {
 
 /**
  * پازل امروز: شماره و کلمه. برای همه‌ی کاربران در یک روز یکسان است.
+ *
+ * نکته: این تابع فعلاً از نیمه‌شبِ محلیِ دستگاه حساب می‌کند، پس کاربرانِ دو
+ * منطقه‌ی زمانی می‌توانند کلمه‌ی متفاوتی بگیرند. در تسک ۲ به `Asia/Tehran` قفل می‌شود.
  */
-export function getDailyPuzzle(today = new Date()) {
+export function getDailyPuzzle(today: Date = new Date()): Puzzle {
   const days = daysSinceEpoch(today);
   const index = ((days % answers.length) + answers.length) % answers.length;
-  return { number: days + 1, solution: answers[index] };
+  const solution = answers[index];
+  if (solution === undefined) {
+    // فقط وقتی ممکن است که فهرست جواب‌ها خالی باشد.
+    throw new Error('فهرست کلمه‌های روز خالی است');
+  }
+  return { number: days + 1, solution };
 }
 
 /** آیا این کلمه یک حدسِ معتبر است؟ */
-export function isValidWord(word, normalize) {
+export function isValidWord(word: string, normalize?: (value: string) => string): boolean {
   const target = normalize ? normalize(word) : word;
   return words.some((w) => (normalize ? normalize(w) : w) === target);
 }

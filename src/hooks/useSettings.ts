@@ -1,15 +1,20 @@
 import { useCallback } from 'react';
-import { KEYS, SETTINGS, defaultSettings } from '../lib/storage';
+import { KEYS, defaultSettings } from '../lib/storage';
 import { useLocalStorage } from './useLocalStorage';
+import type { SetSetting, Settings } from '../types';
 
 /** تنظیمات کاربر: تم، حالت سخت و حالت رنگ‌کوری. */
-export function useSettings() {
-  const [stored, setStored] = useLocalStorage(KEYS.settings, defaultSettings);
-  const settings = { ...defaultSettings, ...stored };
+export function useSettings(): { settings: Settings; setSetting: SetSetting } {
+  const [stored, setStored] = useLocalStorage<Settings>(KEYS.settings, defaultSettings);
+  const settings: Settings = { ...defaultSettings, ...stored };
 
-  const setSetting = useCallback(
-    (name: string, value: string) => {
-      setStored((current: SETTINGS) => ({ ...defaultSettings, ...current, [name]: value }));
+  const setSetting = useCallback<SetSetting>(
+    (name, value) => {
+      setStored((current) => {
+        const next: Settings = { ...defaultSettings, ...current };
+        next[name] = value;
+        return next;
+      });
     },
     [setStored],
   );

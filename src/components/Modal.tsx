@@ -5,22 +5,22 @@ const FOCUSABLE =
   'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 interface ModalProps {
-  open: boolean, 
-  onClose: () => void, 
-  title: string, 
-  labelledBy: string, 
+  open: boolean,
+  onClose: () => void,
+  title: string,
+  labelledBy: string,
   children: ReactNode
 }
 export default function Modal({ open, onClose, title, labelledBy, children }: ModalProps) {
-  const cardRef = useRef(null);
-  const previousFocus = useRef(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return undefined;
 
-    previousFocus.current = document.activeElement;
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     const card = cardRef.current;
-    card?.querySelector(FOCUSABLE)?.focus();
+    card?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -30,13 +30,15 @@ export default function Modal({ open, onClose, title, labelledBy, children }: Mo
       }
       if (event.key !== 'Tab' || !card) return;
 
-      const items = [...card.querySelectorAll(FOCUSABLE)].filter(
+      const items = Array.from(card.querySelectorAll<HTMLElement>(FOCUSABLE)).filter(
         (el) => !el.hasAttribute('disabled'),
       );
       if (items.length === 0) return;
 
       const first = items[0];
       const last = items[items.length - 1];
+      if (!first || !last) return;
+
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();

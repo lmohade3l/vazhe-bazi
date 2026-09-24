@@ -3,8 +3,15 @@ import styles from './Distribution.module.css';
 
 const MIN_WIDTH = 8;
 
+interface DistributionProps {
+  dist: number[];
+  rows: number;
+  /** شماره‌ی تلاشی که پررنگ می‌شود (از ۱)، یا `null`. */
+  highlight?: number | null;
+}
+
 /** توزیع حدس‌ها به‌صورت میله‌های افقی. */
-export default function Distribution({ dist, rows, highlight }) {
+export default function Distribution({ dist, rows, highlight = null }: DistributionProps) {
   const values = Array.from({ length: rows }, (_, i) => dist[i] ?? 0);
   const max = Math.max(...values, 1);
 

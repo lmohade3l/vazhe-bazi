@@ -1,7 +1,12 @@
+import type { ToastMessage } from '../types';
 import styles from './Toast.module.css';
 
+interface ToastProps {
+  toast: ToastMessage | null;
+}
+
 /** پیام کوتاه بالای برد. */
-export default function Toast({ toast }: { toast: { message: string, id: string } }) {
+export default function Toast({ toast }: ToastProps) {
   return (
     <div className={styles.region} role="status" aria-live="polite">
       {toast ? (

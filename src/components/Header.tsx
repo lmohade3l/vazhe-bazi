@@ -42,8 +42,14 @@ function SlidersIcon() {
   );
 }
 
+interface HeaderProps {
+  onHelp: () => void;
+  onStats: () => void;
+  onSettings: () => void;
+}
+
 /** هدر صفحه‌ی بازی. */
-export default function Header({ onHelp, onStats, onSettings }) {
+export default function Header({ onHelp, onStats, onSettings }: HeaderProps) {
   return (
     <header className={styles.header}>
       <div className={styles.side}>

@@ -1,10 +1,23 @@
 import { CORRECT, PRESENT, evaluateGuess } from './evaluate';
 import { toFa } from './persian';
+import type { LetterState, Theme } from '../types';
 
-const EMOJI = {
+type Palette = Partial<Record<LetterState, string>>;
+
+const EMOJI: Record<'normal' | 'colorBlind', Palette> = {
   normal: { [CORRECT]: '🟩', [PRESENT]: '🟨' },
   colorBlind: { [CORRECT]: '🟧', [PRESENT]: '🟦' },
 };
+
+interface ShareOptions {
+  puzzleNumber: number;
+  guesses: string[];
+  solution: string;
+  rows: number;
+  won: boolean;
+  theme: Theme;
+  colorBlind: boolean;
+}
 
 /** متن اشتراک‌گذاری نتیجه‌ی امروز. */
 export function buildShareText({
@@ -15,7 +28,7 @@ export function buildShareText({
   won,
   theme,
   colorBlind,
-}) {
+}: ShareOptions): string {
   const palette = colorBlind ? EMOJI.colorBlind : EMOJI.normal;
   const absent = theme === 'dark' ? '⬛' : '⬜';
   const score = won ? toFa(guesses.length) : 'X';
@@ -36,7 +49,7 @@ export function buildShareText({
  * ابتدا اشتراک‌گذاری بومی، در غیر این صورت کپی در کلیپ‌بورد.
  * در صورت موفقیت `true` برمی‌گرداند.
  */
-export async function shareResult(text) {
+export async function shareResult(text: string): Promise<boolean> {
   try {
     if (navigator.share) {
       await navigator.share({ text });

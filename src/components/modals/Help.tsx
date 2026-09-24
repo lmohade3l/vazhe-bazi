@@ -1,9 +1,18 @@
 import Modal from '../Modal';
 import Tile from '../Tile';
 import { toLetters } from '../../lib/persian';
+import type { LetterState } from '../../types';
 import styles from './Help.module.css';
 
-const EXAMPLES = [
+interface Example {
+  word: string;
+  /** اندیس حرفی که رنگ می‌گیرد. */
+  index: number;
+  state: LetterState;
+  text: string;
+}
+
+const EXAMPLES: Example[] = [
   {
     word: 'ستاره',
     index: 0,
@@ -25,7 +34,12 @@ const EXAMPLES = [
 ];
 
 /** مودال راهنما. */
-export default function Help({ open, onClose } : {open: boolean , onClose: () => void}) {
+interface HelpProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function Help({ open, onClose }: HelpProps) {
   return (
     <Modal open={open} onClose={onClose} title="چطور بازی کنیم" labelledBy="help-title">
       <p className={styles.intro}>
