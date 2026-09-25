@@ -42,6 +42,8 @@ export interface Puzzle {
   /** شماره‌ی پازل، از ۱ شروع می‌شود. */
   number: number;
   solution: string;
+  /** تاریخِ روزِ پازل به وقت تهران، به شکل `YYYY-MM-DD`. */
+  date: string;
 }
 
 /** بازیِ ذخیره‌شده‌ی یک پازل. */

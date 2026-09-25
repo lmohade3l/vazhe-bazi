@@ -6,12 +6,14 @@
  * (و در صورت تمایل به `answers`) — طول هر کلمه باید دقیقاً پنج حرف باشد.
  */
 
+import {
+  assertPuzzleAvailable,
+  getCurrentPuzzleNumber,
+  puzzleNumberToDate,
+} from '../lib/gameDate';
 import type { Puzzle } from '../types';
 
 export const WORD_LENGTH = 5;
-
-/** تاریخ مبنا برای محاسبه‌ی کلمه‌ی روز — نباید تغییر کند. */
-export const EPOCH = new Date(2024, 0, 1);
 
 export const words: string[] = [
   "ستاره", "پرنده", "باران", "آسمان", "پنجره", "کلمات",
@@ -76,28 +78,28 @@ export const answers: string[] = [
   "عقیده", "تصمیم", "نتایج",
 ];
 
-/** تعداد روزهای سپری‌شده از تاریخ مبنا (بر اساس نیمه‌شب محلی). */
-function daysSinceEpoch(today: Date = new Date()): number {
-  const start = Date.UTC(EPOCH.getFullYear(), EPOCH.getMonth(), EPOCH.getDate());
-  const now = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  return Math.floor((now - start) / 86400000);
-}
-
 /**
- * پازل امروز: شماره و کلمه. برای همه‌ی کاربران در یک روز یکسان است.
+ * پازلِ یک شماره‌ی مشخص.
  *
- * نکته: این تابع فعلاً از نیمه‌شبِ محلیِ دستگاه حساب می‌کند، پس کاربرانِ دو
- * منطقه‌ی زمانی می‌توانند کلمه‌ی متفاوتی بگیرند. در تسک ۲ به `Asia/Tehran` قفل می‌شود.
+ * ایندکسِ کلمه از خودِ شماره‌ی پازل می‌آید، پس برای یک روزِ معیّن همیشه همان
+ * کلمه درمی‌آید — مستقل از دستگاه و منطقه‌ی زمانی.
+ *
+ * اگر پازل هنوز نرسیده باشد یا شماره‌اش کمتر از ۱ باشد، خطا می‌دهد.
  */
-export function getDailyPuzzle(today: Date = new Date()): Puzzle {
-  const days = daysSinceEpoch(today);
-  const index = ((days % answers.length) + answers.length) % answers.length;
+export function getPuzzle(puzzleNumber: number, now: Date = new Date()): Puzzle {
+  assertPuzzleAvailable(puzzleNumber, now);
+  const index = (puzzleNumber - 1) % answers.length;
   const solution = answers[index];
   if (solution === undefined) {
     // فقط وقتی ممکن است که فهرست جواب‌ها خالی باشد.
     throw new Error('فهرست کلمه‌های روز خالی است');
   }
-  return { number: days + 1, solution };
+  return { number: puzzleNumber, solution, date: puzzleNumberToDate(puzzleNumber) };
+}
+
+/** پازل امروز. برای همه‌ی کاربران در یک لحظه یکسان است. */
+export function getDailyPuzzle(now: Date = new Date()): Puzzle {
+  return getPuzzle(getCurrentPuzzleNumber(now), now);
 }
 
 /** آیا این کلمه یک حدسِ معتبر است؟ */

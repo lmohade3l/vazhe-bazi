@@ -6,8 +6,10 @@ import tseslint from 'typescript-eslint'
 
 export default tseslint.config(
   { ignores: ['dist'] },
+
+  // کد برنامه — مرورگر، بدون console
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 2022,
@@ -21,6 +23,16 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       'no-console': 'error',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+    },
+  },
+
+  // ابزارهای خط فرمان — Node، خروجی در ترمینال بخشی از کارشان است
+  {
+    files: ['scripts/**/*.ts', 'vite.config.ts'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.node,
     },
   },
 )
