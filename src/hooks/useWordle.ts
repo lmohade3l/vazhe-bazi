@@ -195,7 +195,7 @@ export function useWordle({ hardMode }: UseWordleOptions): WordleGame {
       rejectGuess('حرف کافی نیست');
       return;
     }
-    if (!isValidWord(guess, normalize)) {
+    if (!isValidWord(guess)) {
       rejectGuess('این کلمه در فهرست نیست');
       return;
     }
